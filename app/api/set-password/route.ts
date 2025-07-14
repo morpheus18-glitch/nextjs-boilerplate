@@ -1,20 +1,19 @@
-import { NextResponse } from 'next/server'
-import { setPassword } from '../../../lib/password'
+import { NextResponse } from "next/server";
+import { setPassword } from "../../../lib/password-neon";
 
 export async function POST(req: Request) {
   try {
-    // Optional: Add session check here for production!
-    const cookie = req.headers.get('cookie') || ''
-    const isAuth = cookie.includes('session=authenticated')
-    if (!isAuth) return NextResponse.json({ success: false, error: 'Not authorized' })
+    const cookie = req.headers.get("cookie") || "";
+    const isAuth = cookie.includes("session=authenticated");
+    if (!isAuth) return NextResponse.json({ success: false, error: "Not authorized" });
 
-    const { password } = await req.json()
+    const { password } = await req.json();
     if (!password || password.length < 6) {
-      return NextResponse.json({ success: false, error: 'Password must be at least 6 characters' })
+      return NextResponse.json({ success: false, error: "Password must be at least 6 characters" });
     }
-    await setPassword(password)
-    return NextResponse.json({ success: true })
+    await setPassword(password);
+    return NextResponse.json({ success: true });
   } catch (err) {
-    return NextResponse.json({ success: false, error: 'Server error: ' + String(err) }, { status: 500 })
+    return NextResponse.json({ success: false, error: "Server error: " + String(err) }, { status: 500 });
   }
 }
