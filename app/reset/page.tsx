@@ -1,4 +1,5 @@
 'use client'
+
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -30,25 +31,30 @@ export default function ResetPage() {
       setMsg('Password must be at least 6 characters')
       return
     }
+
     if (newPassword !== confirmPassword) {
       setMsg('Passwords do not match')
       return
     }
+
     setLoading(true)
+
     const res = await fetch('/api/reset-code', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code, password: newPassword }),
     })
+
     const data = await res.json()
     setLoading(false)
+
     if (data.success) {
-      setMsg('Password reset! Redirecting to login…')
+      setMsg('✅ Password reset! Redirecting...')
       setTimeout(() => {
-        router.push('/')
-      }, 1500)
+        router.replace('/') // sends them to login page cleanly
+      }, 2000)
     } else {
-      setMsg(data.error || 'Reset failed')
+      setMsg(data.error || '❌ Reset failed')
     }
   }
 
@@ -58,6 +64,7 @@ export default function ResetPage() {
         <h1 className="text-3xl font-bold text-white text-center mb-8">
           {step === 'code' ? 'Reset Password' : 'Set New Password'}
         </h1>
+
         {step === 'code' ? (
           <form onSubmit={handleCode} className="space-y-6">
             <input
@@ -97,14 +104,13 @@ export default function ResetPage() {
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? (
-                  // Eye-off SVG
-                  <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M3 3l18 18m-1.41-1.41A9.963 9.963 0 0 1 12 21C6.48 21 2 12 2 12a20.61 20.61 0 0 1 5.13-7.06M10.36 6.37A5.978 5.978 0 0 1 12 6c5.52 0 10 9 10 9a20.612 20.612 0 0 1-4.29 5.29"></path></svg>
+                  <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M3 3l18 18m-1.41-1.41A9.963 9.963 0 0 1 12 21C6.48 21 2 12 2 12a20.61 20.61 0 0 1 5.13-7.06M10.36 6.37A5.978 5.978 0 0 1 12 6c5.52 0 10 9 10 9a20.612 20.612 0 0 1-4.29 5.29"/></svg>
                 ) : (
-                  // Eye SVG
                   <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M1 12S6.48 3 12 3s11 9 11 9-4.48 9-11 9S1 12 1 12z"/><circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2"/></svg>
                 )}
               </button>
             </div>
+
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -116,6 +122,7 @@ export default function ResetPage() {
                 minLength={6}
               />
             </div>
+
             <button
               type="submit"
               disabled={loading}
