@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: false, error: 'Invalid username or password' })
   }
 
-  const res = NextResponse.json({ success: true })
+  const res = NextResponse.json({ success: true, role: user.role })
   res.cookies.set('session', `${user.id}:${user.role}`, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',

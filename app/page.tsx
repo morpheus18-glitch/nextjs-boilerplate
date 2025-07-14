@@ -25,7 +25,7 @@ export default function LoginPage() {
       setLoading(false)
 
       if (res.ok && data.success) {
-        router.replace('/dashboard')
+        router.replace(data.role === 'admin' ? '/admin' : '/dashboard')
       } else {
         setError(data.error || 'Login failed')
       }
