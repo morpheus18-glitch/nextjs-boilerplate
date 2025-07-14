@@ -1,26 +1,99 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+html, body {
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(120deg, #0d1736 0%, #12294d 50%, #1a3363 100%);
+  color: #f5f6fa;
+  font-size: 17px;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  transition: background 0.5s cubic-bezier(.7,0,.3,1);
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+a {
+  color: #79aaff;
+  text-decoration: none;
+  transition: color 0.18s;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+a:hover, a:focus {
+  color: #f5f6fa;
+  text-decoration: underline;
+}
+
+input, button, textarea, select {
+  font: inherit;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+}
+
+input[type="text"], input[type="password"], input[type="email"] {
+  background: #151d38;
+  color: #f5f6fa;
+  padding: 12px 18px;
+  margin-bottom: 8px;
+  border: 1.5px solid #24385d;
+  transition: border 0.2s;
+  font-size: 16px;
+}
+
+input:focus {
+  border: 1.5px solid #79aaff;
+}
+
+button {
+  background: linear-gradient(90deg, #334fff 60%, #132e4f 120%);
+  color: white;
+  font-weight: 700;
+  padding: 10px 22px;
+  border: none;
+  box-shadow: 0 1px 6px rgba(30, 60, 180, 0.09);
+  cursor: pointer;
+  font-size: 16px;
+  margin: 8px 0;
+  transition: background 0.18s, color 0.18s;
+}
+
+button:disabled {
+  background: #324464;
+  color: #888;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background: linear-gradient(90deg, #2030a0 60%, #1c2a4f 120%);
+}
+
+form {
+  background: rgba(22,28,48,0.92);
+  padding: 32px 28px;
+  border-radius: 18px;
+  box-shadow: 0 4px 32px rgba(10,20,40,0.19);
+  margin: 30px 0;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+h1, h2, h3 {
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.015em;
+  margin-top: 0;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 640px) {
+  form {
+    padding: 18px 8px;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  html, body {
+    font-size: 16px;
+  }
 }
