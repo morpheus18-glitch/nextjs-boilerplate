@@ -21,7 +21,7 @@ export default function LoginPage() {
     setLoading(false)
 
     if (res.ok && data.success) {
-      setTimeout(() => 
+      setTimeout(() => {
         window.location.href = '/dashboard'
       }, 150)
     } else {
