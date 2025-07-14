@@ -1,21 +1,22 @@
 import { NextResponse } from 'next/server'
-import { updatePasswordById } from '@/lib/users'
+import { updatePassword } from '@/lib/users'
 
 export async function POST(req: Request) {
   try {
     const cookie = req.headers.get('cookie') || ''
     const match = cookie.match(/session=([^;]+)/)
     const session = match ? match[1] : null
-    if (!session) return NextResponse.json({ success: false, error: 'Not authorized' })
-    const [idStr] = session.split(':')
-    const userId = parseInt(idStr, 10)
-    if (!userId) return NextResponse.json({ success: false, error: 'Invalid session' })
+    const role = session?.split(':')[1]
+    if (role !== 'admin') return NextResponse.json({ success: false, error: 'Not authorized' })
 
-    const { password } = await req.json()
-    if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(password)) {
-      return NextResponse.json({ success: false, error: 'Password does not meet requirements' })
+    const { username, password } = await req.json()
+    if (!username || !password) {
+      return NextResponse.json({ success: false, error: 'Missing fields' })
     }
-    await updatePasswordById(userId, password)
+    if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(password)) {
+      return NextResponse.json({ success: false, error: 'Weak password' })
+    }
+    await updatePassword(username, password)
     return NextResponse.json({ success: true })
   } catch (err) {
     return NextResponse.json({ success: false, error: 'Server error: ' + String(err) }, { status: 500 })

@@ -1,23 +1,24 @@
 import { NextResponse } from 'next/server'
-import { verifyPassword } from '@/lib/password'
+import { verifyUser } from '@/lib/users'
 
 export async function POST(req: Request) {
-  const { password } = await req.json()
+  const { username, password } = await req.json()
 
-  if (!password) {
-    return NextResponse.json({ success: false, error: 'Missing password' })
+  if (!username || !password) {
+    return NextResponse.json({ success: false, error: 'Missing credentials' })
   }
 
-  const valid = await verifyPassword(password)
+  const user = await verifyUser(username, password)
 
-  if (!valid) {
-    return NextResponse.json({ success: false, error: 'Incorrect password' })
+  if (!user) {
+    return NextResponse.json({ success: false, error: 'Invalid username or password' })
   }
 
   const res = NextResponse.json({ success: true })
-  res.cookies.set('session', 'authenticated', {
+  res.cookies.set('session', `${user.id}:${user.role}`, {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
     path: '/',
     maxAge: 60 * 60,
   })
