@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { CSSProperties } from 'react'
+import { CSSProperties, useEffect, useState } from 'react'
 
 const navBarStyles = {
   nav: {
@@ -43,19 +43,53 @@ const getLinkStyle = (isActive: boolean): CSSProperties => ({
 
 export default function Navbar() {
   const pathname = usePathname()
+  const [role, setRole] = useState<'admin' | 'user' | null>(null)
+
+  useEffect(() => {
+    async function fetchRole() {
+      try {
+        const res = await fetch('/api/session')
+        const data = await res.json()
+        if (data.authenticated) {
+          setRole(data.role)
+        }
+      } catch (err) {
+        console.error('Failed to fetch session', err)
+      }
+    }
+    fetchRole()
+  }, [])
 
   return (
     <nav style={navBarStyles.nav}>
       <div style={navBarStyles.container}>
         <div style={navBarStyles.title}>Vault Admin</div>
         <div>
-          <Link href="/dashboard" style={getLinkStyle(pathname === '/dashboard')}>
-            Dashboard
-          </Link>
-          <Link href="/admin" style={getLinkStyle(pathname === '/admin')}>
-            Admin
-          </Link>
-          <Link href="/reset-password" style={getLinkStyle(pathname === '/reset-password')}>
+          {role && (
+            <Link href="/dashboard" style={getLinkStyle(pathname.startsWith('/dashboard'))}>
+              Dashboard
+            </Link>
+          )}
+          {role === 'admin' && (
+            <Link href="/admin" style={getLinkStyle(pathname.startsWith('/admin'))}>
+              Admin
+            </Link>
+          )}
+          {role ? (
+            <a
+              href="#"
+              onClick={() => {
+                document.cookie = 'session=; Max-Age=0; path=/'
+                window.location.href = '/'
+              }}
+              style={getLinkStyle(false)}
+            >
+              Logout
+            </a>
+          ) : (
+            <Link href="/" style={getLinkStyle(pathname === '/')}>Login</Link>
+          )}
+          <Link href="/reset" style={getLinkStyle(pathname.startsWith('/reset'))}>
             Reset Password
           </Link>
         </div>

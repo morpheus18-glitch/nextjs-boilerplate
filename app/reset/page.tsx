@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 
 export default function ResetPage() {
   const [step, setStep] = useState<'code' | 'reset'>('code')
+  const [username, setUsername] = useState('')
   const [code, setCode] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -27,8 +28,8 @@ export default function ResetPage() {
     e.preventDefault()
     setMsg('')
 
-    if (newPassword.length < 6) {
-      setMsg('Password must be at least 6 characters')
+    if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(newPassword)) {
+      setMsg('Password too weak')
       return
     }
 
@@ -42,7 +43,7 @@ export default function ResetPage() {
     const res = await fetch('/api/reset-code', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code, password: newPassword }),
+      body: JSON.stringify({ username, code, password: newPassword })
     })
 
     const data = await res.json()
@@ -51,7 +52,7 @@ export default function ResetPage() {
     if (data.success) {
       setMsg('✅ Password reset! Redirecting...')
       setTimeout(() => {
-        router.replace('/') // sends them to login page cleanly
+        router.replace('/')
       }, 2000)
     } else {
       setMsg(data.error || '❌ Reset failed')
@@ -69,12 +70,20 @@ export default function ResetPage() {
           <form onSubmit={handleCode} className="space-y-6">
             <input
               type="text"
+              placeholder="Username"
+              className="w-full rounded-lg px-5 py-3 bg-gray-900/80 text-white border border-gray-800 focus:border-blue-500 outline-none text-lg"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              required
+              autoFocus
+            />
+            <input
+              type="text"
               placeholder="Enter reset code"
               className="w-full rounded-lg px-5 py-3 bg-gray-900/80 text-white border border-gray-800 focus:border-blue-500 outline-none text-lg"
               value={code}
               onChange={e => setCode(e.target.value)}
               required
-              autoFocus
             />
             <button
               type="submit"
@@ -94,7 +103,6 @@ export default function ResetPage() {
                 onChange={e => setNewPassword(e.target.value)}
                 required
                 autoFocus
-                minLength={6}
               />
               <button
                 type="button"
@@ -119,7 +127,6 @@ export default function ResetPage() {
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
                 required
-                minLength={6}
               />
             </div>
 
