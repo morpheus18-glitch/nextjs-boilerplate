@@ -18,7 +18,7 @@ export default function LoginPage() {
     const data = await res.json()
     setLoading(false)
     if (data.success) {
-      window.location.href = '/admin'
+      window.location.href = '/dashboard'
     } else {
       setError(data.error || 'Login failed')
     }
