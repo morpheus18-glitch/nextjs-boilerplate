@@ -10,17 +10,27 @@ export default function LoginPage() {
     e.preventDefault()
     setError('')
     setLoading(true)
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password }),
+   
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
     })
     const data = await res.json()
     setLoading(false)
-    if (data.success) {
-      window.location.href = '/dashboard'
+
+    if (res.ok && data.success) {
+      setTimeout(() => 
+        window.location.href = '/dashboard'
+      }, 150)
     } else {
       setError(data.error || 'Login failed')
+    }
+  } catch (err) {
+    console.error('Login error:', err)
+    setLoading(false)
+    setError('Something went wrong. Try again.')
     }
   }
 
