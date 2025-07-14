@@ -23,9 +23,9 @@ export default function LoginPage() {
     if (res.ok && data.success) {
       setTimeout(() => {
         window.location.href = '/dashboard';
-      , 150)
+     } , 150)
     } else {
-      setError(data.error || 'Login failed')
+      setError(data.error || 'Login failed');
     }
   } catch (err) {
     console.error('Login error:', err)
