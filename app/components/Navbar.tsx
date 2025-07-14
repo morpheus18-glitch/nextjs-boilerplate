@@ -2,6 +2,7 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useState } from "react"
+import { CSSProperties } from 'react'
 
 const navLinks = [
   { href: "/dashboard", label: "Dashboard" },
@@ -9,10 +10,16 @@ const navLinks = [
   { href: "/reset", label: "Reset Password" },
 ]
 
-const navBarStyles = {
+const navBarStyles: {
+  nav: CSSProperties;
+  container: CSSProperties;
+  title: CSSProperties;
+} = {
   nav: {
     position: 'fixed',
-    top: 0, left: 0, width: '100%',
+    top: 0, 
+    left: 0, 
+    width: '100%',
     zIndex: 50,
     background: 'rgba(28,32,48,0.85)',
     backdropFilter: 'blur(16px)',
