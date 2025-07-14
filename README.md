@@ -18,6 +18,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 The application uses a PostgreSQL database via Neon. Set the `DATABASE_URL` environment variable to your connection string before running the server. When the app first connects it will automatically create the required `users` table and insert a default admin account.
 
+During local development the session cookie is set without the `Secure` flag so login works over HTTP. In production the cookie is `Secure` and `SameSite=Lax`.
+
 **Default credentials**
 
 - Username: `admin`
