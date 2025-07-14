@@ -1,0 +1,16 @@
+import { NextResponse } from 'next/server'
+import { setPassword } from '../../../lib/password'
+
+// Only allow from authenticated session
+export async function POST(req: Request) {
+  const cookie = req.headers.get('cookie') || ''
+  const isAuth = cookie.includes('session=authenticated')
+  if (!isAuth) return NextResponse.json({ success: false, error: 'Not authorized' })
+
+  const { password } = await req.json()
+  if (!password || password.length < 6) {
+    return NextResponse.json({ success: false, error: 'Password must be at least 6 characters' })
+  }
+  await setPassword(password)
+  return NextResponse.json({ success: true })
+}
