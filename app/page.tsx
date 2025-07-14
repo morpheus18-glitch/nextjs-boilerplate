@@ -25,7 +25,12 @@ export default function LoginPage() {
       setLoading(false)
 
       if (res.ok && data.success) {
+
         router.replace(data.role === 'admin' ? '/admin' : '/dashboard')
+        setTimeout(() => {
+          window.location.href = '/dashboard'
+        }, 150)
+
       } else {
         setError(data.error || 'Login failed')
       }
