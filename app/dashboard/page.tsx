@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation'
 import AnimatedGear from "../components/AnimatedGear";
 import {
   Chart,
@@ -33,12 +34,13 @@ interface DashboardData {
 export default function Dashboard() {
   const [role, setRole] = useState<"admin" | "user" | null>(null);
   const [data, setData] = useState<DashboardData | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (typeof document === "undefined") return;
     const match = document.cookie.match(/session=([^;]+)/);
     if (!match) {
-      window.location.href = "/";
+      router.replace("/login");
       return;
     }
     const [, value] = match;
@@ -125,7 +127,7 @@ export default function Dashboard() {
           className="px-6 py-3 bg-gray-700 hover:bg-gray-900 rounded-lg text-white font-semibold shadow"
           onClick={() => {
             document.cookie = "session=; Max-Age=0; path=/";
-            window.location.href = "/";
+            router.replace("/login");
           }}
         >
           Logout
