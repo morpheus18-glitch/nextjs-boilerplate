@@ -16,6 +16,17 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+The application uses a PostgreSQL database via Neon. Set the `DATABASE_URL` environment variable to your connection string before running the server. When the app first connects it will automatically create the required `users` table and insert a default admin account.
+
+During local development the session cookie is set without the `Secure` flag so login works over HTTP. In production the cookie is `Secure` and `SameSite=Lax`.
+
+**Default credentials**
+
+- Username: `admin`
+- Password: `Admin@123`
+
+After a successful login the session cookie is stored and you will be redirected automatically to the dashboard (admins go to the admin page).
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
