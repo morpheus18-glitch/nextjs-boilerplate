@@ -7,6 +7,11 @@ export async function POST(req: Request) {
   const valid = await verifyPassword(password);
   if (!valid) return NextResponse.json({ success: false, error: "Incorrect password" });
   const response = NextResponse.json({ success: true });
-  response.cookies.set("session", "authenticated", { httpOnly: true, secure: true, maxAge: 3600, path: "/" });
-  return response;
+  res.cookies.set("session", "authenticated", { 
+    httpOnly: true,
+    secure: true,
+    maxAge: 3600,
+    path: "/",
+    });
+  return res;
 }
