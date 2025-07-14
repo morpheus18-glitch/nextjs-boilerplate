@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -7,6 +8,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -23,9 +25,7 @@ export default function LoginPage() {
       setLoading(false)
 
       if (res.ok && data.success) {
-        setTimeout(() => {
-          window.location.href = '/dashboard'
-        }, 150)
+        router.push('/dashboard')
       } else {
         setError(data.error || 'Login failed')
       }
@@ -83,7 +83,7 @@ export default function LoginPage() {
           <button
             type="button"
             className="w-full py-2 text-sm text-blue-200 hover:text-blue-400"
-            onClick={() => window.location.href = '/reset'}
+            onClick={() => router.push('/reset')}
           >
             Forgot password?
           </button>
