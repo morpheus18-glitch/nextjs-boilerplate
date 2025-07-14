@@ -30,7 +30,7 @@ const navBarStyles = {
     color: 'white',
     textShadow: '0 1px 8px rgba(60, 110, 240, 0.15)'
   },
-  link: isActive => ({
+  link: (isActive: boolean) => ({
     display: 'inline-block',
     margin: '0 4px',
     padding: '7px 18px',
