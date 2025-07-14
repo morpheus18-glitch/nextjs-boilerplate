@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { CSSProperties } from 'react'
+import { CSSProperties, useEffect, useState } from 'react'
 
 const navBarStyles = {
   nav: {
@@ -43,19 +43,48 @@ const getLinkStyle = (isActive: boolean): CSSProperties => ({
 
 export default function Navbar() {
   const pathname = usePathname()
+  const [role, setRole] = useState<'admin' | 'user' | null>(null)
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    const match = document.cookie.match(/session=([^;]+)/)
+    if (match) {
+      const [, value] = match
+      const parts = value.split(':')
+      setRole(parts[1] as 'admin' | 'user')
+    }
+  }, [])
 
   return (
     <nav style={navBarStyles.nav}>
       <div style={navBarStyles.container}>
         <div style={navBarStyles.title}>Vault Admin</div>
         <div>
-          <Link href="/dashboard" style={getLinkStyle(pathname === '/dashboard')}>
-            Dashboard
-          </Link>
-          <Link href="/admin" style={getLinkStyle(pathname === '/admin')}>
-            Admin
-          </Link>
-          <Link href="/reset-password" style={getLinkStyle(pathname === '/reset-password')}>
+          {role && (
+            <Link href="/dashboard" style={getLinkStyle(pathname.startsWith('/dashboard'))}>
+              Dashboard
+            </Link>
+          )}
+          {role === 'admin' && (
+            <Link href="/admin" style={getLinkStyle(pathname.startsWith('/admin'))}>
+              Admin
+            </Link>
+          )}
+          {role ? (
+            <a
+              href="#"
+              onClick={() => {
+                document.cookie = 'session=; Max-Age=0; path=/'
+                window.location.href = '/'
+              }}
+              style={getLinkStyle(false)}
+            >
+              Logout
+            </a>
+          ) : (
+            <Link href="/" style={getLinkStyle(pathname === '/')}>Login</Link>
+          )}
+          <Link href="/reset" style={getLinkStyle(pathname.startsWith('/reset'))}>
             Reset Password
           </Link>
         </div>

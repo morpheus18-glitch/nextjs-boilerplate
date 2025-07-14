@@ -14,10 +14,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: false, error: 'Invalid username or password' })
   }
 
+
+  const res = NextResponse.json({ success: true, role: user.role })
   const res = NextResponse.json({ success: true })
+
   res.cookies.set('session', `${user.id}:${user.role}`, {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
     path: '/',
     maxAge: 60 * 60,
   })
