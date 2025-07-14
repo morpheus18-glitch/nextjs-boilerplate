@@ -64,7 +64,7 @@ export default function Navbar() {
   const router = useRouter()
   const [loggingOut, setLoggingOut] = useState(false)
 
-  const handleLogout(e) {
+  const handleLogout = (e:React.MouseEvent) => {
     e.preventDefault()
     setLoggingOut(true)
     document.cookie = "session=; Max-Age=0; path=/"
