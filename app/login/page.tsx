@@ -1,8 +1,5 @@
-
-export { default } from './dashboard/page'
-
 'use client'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
@@ -28,7 +25,7 @@ export default function LoginPage() {
       setLoading(false)
 
       if (res.ok && data.success) {
-        router.push('/dashboard')
+        router.push('/')
       } else {
         setError(data.error || 'Login failed')
       }
@@ -93,4 +90,6 @@ export default function LoginPage() {
           {error && <div className="text-center text-red-300 mt-2">{error}</div>}
         </form>
       </div>
-    
+    </div>
+  )
+}

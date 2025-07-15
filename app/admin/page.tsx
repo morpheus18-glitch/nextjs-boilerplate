@@ -215,7 +215,7 @@ export default function AdminPage() {
           </form>
         </div>
         {msg && <div className="text-center text-green-300 mt-4">{msg}</div>}
-        <a href="/dashboard" className="block text-blue-300 hover:text-blue-500 text-center">← Back to Dashboard</a>
+        <a href="/" className="block text-blue-300 hover:text-blue-500 text-center">← Back to Dashboard</a>
       </div>
     </div>
   )

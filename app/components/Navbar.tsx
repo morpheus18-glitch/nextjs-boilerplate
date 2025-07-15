@@ -49,7 +49,7 @@ export default function Navbar() {
       <div style={navBarStyles.container}>
         <div style={navBarStyles.title}>Vault Admin</div>
         <div>
-          <Link href="/dashboard" style={getLinkStyle(pathname === '/dashboard')}>
+          <Link href="/" style={getLinkStyle(pathname === '/' || pathname === '/dashboard')}>
             Dashboard
           </Link>
           <Link href="/admin" style={getLinkStyle(pathname === '/admin')}>
