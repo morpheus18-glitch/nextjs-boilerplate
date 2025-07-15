@@ -49,16 +49,12 @@ INITIAL_ADMIN_PASSWORD=changeme
 ```
 
 Run `npm run init-db` once to create the necessary tables and optionally seed the first admin user.
-=======
-The application requires a PostgreSQL connection provided via the `DATABASE_URL` environment variable. Create a `.env` file in the project root based on the example below:
-
-```env
-DATABASE_URL=postgres://user:password@host/db
-```
-
-An example file is included as `.env.example`.
 
 
 ## Password reset flow
 
 Visit `/reset` and enter a username. Selecting **Send Code** generates a one‑time code on the server and displays it for demonstration purposes. After receiving the code, enter it together with a new password to complete the reset.
+
+## Demo login system
+
+For a self-contained demonstration that does not rely on the backend APIs, visit `/login-system`. This page showcases a simple login, password reset and dashboard flow implemented entirely on the client side.
