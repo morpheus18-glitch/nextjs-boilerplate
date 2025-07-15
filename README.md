@@ -49,6 +49,15 @@ INITIAL_ADMIN_PASSWORD=changeme
 ```
 
 Run `npm run init-db` once to create the necessary tables and optionally seed the first admin user.
+=======
+The application requires a PostgreSQL connection provided via the `DATABASE_URL` environment variable. Create a `.env` file in the project root based on the example below:
+
+```env
+DATABASE_URL=postgres://user:password@host/db
+```
+
+An example file is included as `.env.example`.
+
 
 ## Password reset flow
 
