@@ -49,3 +49,25 @@ export async function updatePasswordById(id: number, password: string) {
   const { salt, hash } = await hashPassword(password)
   await sql`UPDATE users SET salt = ${salt}, hash = ${hash} WHERE id = ${id}`
 }
+
+export async function createResetCode(username: string) {
+  const crypto = await import('crypto')
+  const code = crypto.randomInt(100000, 1000000).toString()
+  await sql`
+    INSERT INTO reset_codes (username, code, expires)
+    VALUES (${username}, ${code}, NOW() + INTERVAL '1 hour')
+    ON CONFLICT (username)
+    DO UPDATE SET code = ${code}, expires = NOW() + INTERVAL '1 hour'
+  `
+  return code
+}
+
+export async function verifyResetCode(username: string, code: string) {
+  const rows = await sql`SELECT code, expires FROM reset_codes WHERE username = ${username}` as unknown as { code: string, expires: string }[]
+  if (!rows.length) return false
+  await sql`DELETE FROM reset_codes WHERE username = ${username}`
+  const record = rows[0]
+  if (record.code !== code) return false
+  if (new Date(record.expires) < new Date()) return false
+  return true
+}
