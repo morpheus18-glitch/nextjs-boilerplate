@@ -34,3 +34,22 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Configuration
+
+The application requires a PostgreSQL connection provided via the `DATABASE_URL` environment variable.
+Create a `.env` file in the project root using `.env.example` as a starting point:
+
+```env
+DATABASE_URL=postgres://user:password@host/db
+
+# Optional: used by `npm run init-db` to create the first admin
+INITIAL_ADMIN_USER=admin
+INITIAL_ADMIN_PASSWORD=changeme
+```
+
+Run `npm run init-db` once to create the necessary tables and optionally seed the first admin user.
+
+## Password reset flow
+
+Visit `/reset` and enter a username. Selecting **Send Code** generates a one‑time code on the server and displays it for demonstration purposes. After receiving the code, enter it together with a new password to complete the reset.

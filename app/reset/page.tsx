@@ -17,10 +17,19 @@ export default function ResetPage() {
   async function handleCode(e: React.FormEvent) {
     e.preventDefault()
     setMsg('')
-    if (code === '123456') {
+    setLoading(true)
+    const res = await fetch('/api/reset-code/request', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username })
+    })
+    const data = await res.json()
+    setLoading(false)
+    if (data.success) {
+      setMsg(`Code sent! (demo code: ${data.code})`)
       setStep('reset')
     } else {
-      setMsg('Invalid code (hint: 123456)')
+      setMsg(data.error || 'Failed to send code')
     }
   }
 
@@ -77,23 +86,24 @@ export default function ResetPage() {
               required
               autoFocus
             />
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-800 font-bold text-white text-lg"
+            >
+              {loading ? 'Sending…' : 'Send Code'}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleReset} className="space-y-6">
             <input
               type="text"
-              placeholder="Enter reset code"
+              placeholder="Reset code"
               className="w-full rounded-lg px-5 py-3 bg-gray-900/80 text-white border border-gray-800 focus:border-blue-500 outline-none text-lg"
               value={code}
               onChange={e => setCode(e.target.value)}
               required
             />
-            <button
-              type="submit"
-              className="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-800 font-bold text-white text-lg"
-            >
-              Verify Code
-            </button>
-          </form>
-        ) : (
-          <form onSubmit={handleReset} className="space-y-6">
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}

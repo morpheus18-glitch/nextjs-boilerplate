@@ -1,5 +1,6 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function AdminPage() {
   const [newPassword, setNewPassword] = useState('')
@@ -12,6 +13,19 @@ export default function AdminPage() {
   const [userRole, setUserRole] = useState<'user' | 'admin'>('user')
   const [userPass, setUserPass] = useState('')
   const [userPass2, setUserPass2] = useState('')
+  const router = useRouter()
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    const match = document.cookie.match(/session=([^;]+)/)
+    if (!match) {
+      router.replace('/')
+      return
+    }
+    const [, value] = match
+    const role = value.split(':')[1]
+    if (role !== 'admin') router.replace('/dashboard')
+  }, [router])
 
   async function handleChange(e: React.FormEvent) {
     e.preventDefault()

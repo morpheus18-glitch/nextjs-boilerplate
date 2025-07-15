@@ -51,7 +51,7 @@ export default function Dashboard() {
       .then((res) => res.json())
       .then(setData)
       .catch(() => {});
-  }, []);
+  }, [router]);
 
   if (!data) {
     return (
