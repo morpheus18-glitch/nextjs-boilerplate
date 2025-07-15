@@ -48,7 +48,15 @@ INITIAL_ADMIN_USER=admin
 INITIAL_ADMIN_PASSWORD=changeme
 ```
 
+
 Run `npm run init-db` once to create the necessary tables and optionally seed the first admin user.
+
+## Server actions
+
+The `app/actions.ts` file contains server-only functions. These actions run in
+Node.js and can safely access environment variables like `DATABASE_URL` without
+leaking them to the browser. The example `getData()` function returns a list of
+users from the database using the Neon serverless driver.
 
 
 ## Password reset flow
