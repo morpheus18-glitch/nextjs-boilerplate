@@ -40,7 +40,11 @@ export default function Dashboard() {
     if (typeof document === "undefined") return;
     const match = document.cookie.match(/session=([^;]+)/);
     if (!match) {
+
       router.replace("/login");
+
+      router.replace("/");
+
       return;
     }
     const [, value] = match;
@@ -127,7 +131,11 @@ export default function Dashboard() {
           className="px-6 py-3 bg-gray-700 hover:bg-gray-900 rounded-lg text-white font-semibold shadow"
           onClick={() => {
             document.cookie = "session=; Max-Age=0; path=/";
+
             router.replace("/login");
+
+            router.replace("/");
+        main
           }}
         >
           Logout
