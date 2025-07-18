@@ -1,94 +1,151 @@
 'use client'
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
 
 export default function LoginPage() {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const [formData, setFormData] = useState({ email: '', password: '' })
+  const [showPassword, setShowPassword] = useState(false)
+  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({})
+  const [loading, setLoading] = useState(false)
+
+  function validateEmail(email: string) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  }
+
+  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+    if (errors[name as 'email' | 'password']) {
+      setErrors(prev => ({ ...prev, [name]: '' }))
+    }
+  }
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
-    setError('')
     setLoading(true)
+    setErrors({})
+
+    const newErrors: { email?: string; password?: string } = {}
+    if (!formData.email) {
+      newErrors.email = 'Email is required'
+    } else if (!validateEmail(formData.email)) {
+      newErrors.email = 'Please enter a valid email'
+    }
+    if (!formData.password) {
+      newErrors.password = 'Password is required'
+    }
+    if (Object.keys(newErrors).length) {
+      setErrors(newErrors)
+      setLoading(false)
+      return
+    }
 
     try {
       const res = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username: formData.email, password: formData.password })
       })
       const data = await res.json()
-      setLoading(false)
 
       if (res.ok && data.success) {
         router.push('/dashboard')
       } else {
-        setError(data.error || 'Login failed')
+        setErrors({ general: data.error || 'Invalid credentials' })
       }
     } catch (err) {
-      console.error('Login error:', err)
+      setErrors({ general: 'Something went wrong' })
+    } finally {
       setLoading(false)
-      setError('Something went wrong. Try again.')
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-900 to-blue-950">
-      <div className="w-full max-w-md bg-white/10 backdrop-blur-xl rounded-2xl shadow-xl p-10 border border-white/10">
-        <h1 className="text-4xl font-extrabold text-white text-center mb-8">🔒 Secure Login</h1>
-        <form onSubmit={handleLogin} className="space-y-6">
-          <input
-            type="text"
-            placeholder="Username"
-            className="w-full rounded-lg px-5 py-3 bg-gray-900/80 text-white border border-gray-800 focus:border-blue-500 outline-none text-lg"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            required
-            autoFocus
-          />
-          <div className="relative">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Password"
-              className="w-full rounded-lg px-5 py-3 bg-gray-900/80 text-white border border-gray-800 focus:border-blue-500 outline-none text-lg"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-            />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="max-w-md w-full space-y-8">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <div className="text-center mb-8">
+            <div className="mx-auto h-12 w-12 bg-indigo-600 rounded-full flex items-center justify-center mb-4">
+              <Lock className="h-6 w-6 text-white" />
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
+            <p className="text-gray-600 mt-2">Sign in to your account</p>
+          </div>
+          {errors.general && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+              {errors.general}
+            </div>
+          )}
+          <div className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email Address
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  onKeyDown={e => e.key === 'Enter' && handleLogin(e)}
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors ${
+                    errors.email ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="Enter your email"
+                />
+              </div>
+              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  onKeyDown={e => e.key === 'Enter' && handleLogin(e)}
+                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors ${
+                    errors.password ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
+              </div>
+              {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+            </div>
+            <div className="flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => router.push('/reset')}
+                className="text-sm text-indigo-600 hover:text-indigo-500 font-medium"
+              >
+                Forgot your password?
+              </button>
+            </div>
             <button
-              type="button"
-              tabIndex={-1}
-              onClick={() => setShowPassword(v => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              onClick={handleLogin}
+              disabled={loading}
+              className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {showPassword ? (
-                <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M3 3l18 18m-1.41-1.41A9.963 9.963 0 0 1 12 21C6.48 21 2 12 2 12a20.61 20.61 0 0 1 5.13-7.06M10.36 6.37A5.978 5.978 0 0 1 12 6c5.52 0 10 9 10 9a20.612 20.612 0 0 1-4.29 5.29"/></svg>
-              ) : (
-                <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M1 12S6.48 3 12 3s11 9 11 9-4.48 9-11 9S1 12 1 12z"/><circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2"/></svg>
-              )}
+              {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-800 font-bold text-white text-lg"
-          >
-            {loading ? 'Signing in…' : 'Login'}
-          </button>
-          <button
-            type="button"
-            className="w-full py-2 text-sm text-blue-200 hover:text-blue-400"
-            onClick={() => router.push('/reset')}
-          >
-            Forgot password?
-          </button>
-          {error && <div className="text-center text-red-300 mt-2">{error}</div>}
-        </form>
+        </div>
       </div>
     </div>
   )
