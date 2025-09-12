@@ -35,6 +35,45 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+## Containerization & Deployment
+
+The project includes a production-ready `Dockerfile` and infrastructure scaffolding under `ops/`.
+
+### Docker
+
+Build and run the application in a container:
+
+```bash
+docker build -t nextjs-app .
+docker run -p 3000:3000 --env DATABASE_URL=postgres://user:password@host/db nextjs-app
+```
+
+### Docker Compose
+
+For local development with PostgreSQL:
+
+```bash
+docker compose -f ops/compose/dev.yml up --build
+```
+
+### Helm
+
+Deploy to Kubernetes using the provided Helm chart:
+
+```bash
+helm install nextjs-app ops/helm/nextjs-app \
+  --set image.repository=your-registry/nextjs-app \
+  --set image.tag=latest
+```
+
+## API Documentation
+
+An OpenAPI specification for all server routes is available at `docs/api/openapi.yaml`.
+
+## Security
+
+The application sends common HTTP security headers on every response, including a Content Security Policy, Referrer Policy, and HSTS. Session cookies are marked `HttpOnly`, `Secure` in production, and use `SameSite=Strict` to mitigate cross‑site request forgery.
+
 ## Configuration
 
 The application requires a PostgreSQL connection provided via the `DATABASE_URL` environment variable.
