@@ -1,0 +1,214 @@
+openapi: 3.1.0
+info:
+  title: Next.js Boilerplate API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/login:
+    post:
+      summary: Authenticate a user and create a session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Success or error indicator
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+  /api/dashboard-data:
+    get:
+      summary: Fetch dashboard statistics
+      responses:
+        '200':
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardData'
+  /api/admin/create-user:
+    post:
+      summary: Create a new user (admin only)
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '200':
+          description: Success or error indicator
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResponse'
+  /api/admin/reset-password:
+    post:
+      summary: Reset a user's password (admin only)
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+      responses:
+        '200':
+          description: Success or error indicator
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResponse'
+  /api/reset-code:
+    post:
+      summary: Verify a reset code and set a new password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetCodeRequest'
+      responses:
+        '200':
+          description: Success or error indicator
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResponse'
+  /api/set-password:
+    post:
+      summary: Change the password for the authenticated user
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetPasswordRequest'
+      responses:
+        '200':
+          description: Success or error indicator
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResponse'
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: session
+  schemas:
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    LoginResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+          nullable: true
+    DashboardData:
+      type: object
+      properties:
+        inventory:
+          type: object
+          properties:
+            new:
+              type: integer
+            used:
+              type: integer
+            total:
+              type: integer
+        sales:
+          type: object
+          properties:
+            months:
+              type: array
+              items:
+                type: string
+            numbers:
+              type: array
+              items:
+                type: integer
+            total:
+              type: integer
+        financing:
+          type: object
+          properties:
+            financedRate:
+              type: number
+            averageAPR:
+              type: number
+            totalFinanced:
+              type: integer
+        profitLoss:
+          type: object
+          properties:
+            revenue:
+              type: integer
+            expenses:
+              type: integer
+            net:
+              type: integer
+    CreateUserRequest:
+      type: object
+      required: [username, password, role]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [admin, user]
+    ResetPasswordRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    ResetCodeRequest:
+      type: object
+      required: [username, code, password]
+      properties:
+        username:
+          type: string
+        code:
+          type: string
+        password:
+          type: string
+    SetPasswordRequest:
+      type: object
+      required: [password]
+      properties:
+        password:
+          type: string
+    SimpleResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+          nullable: true

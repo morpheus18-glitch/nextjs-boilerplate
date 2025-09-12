@@ -1,0 +1,11 @@
+image:
+  repository: nextjs-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 3000
+
+env:
+  DATABASE_URL: postgres://user:password@db/db
