@@ -35,6 +35,10 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+## Security
+
+The application sends common HTTP security headers on every response, including a Content Security Policy, Referrer Policy, and HSTS. Session cookies are marked `HttpOnly`, `Secure` in production, and use `SameSite=Strict` to mitigate cross‑site request forgery.
+
 ## Configuration
 
 The application requires a PostgreSQL connection provided via the `DATABASE_URL` environment variable.
